@@ -1,4 +1,4 @@
-import { put, head, download } from "@vercel/blob";
+import { get, put } from "@vercel/blob";
 import type { BookingData } from "@/lib/types";
 
 const BLOB_PATH = "bookings/current.json";
@@ -23,10 +23,13 @@ const fallbackData: BookingData = {
 
 export async function getBookingData(): Promise<BookingData> {
   try {
-    const blob = await head(BLOB_PATH);
-    const response = await download(blob.url);
-    const text = await response.text();
+    const result = await get(BLOB_PATH, { access: "private" });
 
+    if (!result || !result.stream) {
+      return fallbackData;
+    }
+
+    const text = await new Response(result.stream).text();
     return JSON.parse(text) as BookingData;
   } catch {
     return fallbackData;
@@ -39,6 +42,7 @@ export async function saveBookingData(data: BookingData) {
   await put(BLOB_PATH, body, {
     access: "private",
     addRandomSuffix: false,
+    allowOverwrite: true,
     contentType: "application/json",
   });
 }
