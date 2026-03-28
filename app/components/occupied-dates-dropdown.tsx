@@ -60,7 +60,7 @@ export default function OccupiedDatesDropdown({ occupiedDates }: Props) {
               <div>
                 <p className={styles.yearTitle}>{yearGroup.year}</p>
                 <p className={styles.metaText}>
-                  {yearGroup.totalNights} occupied night
+                  {yearGroup.totalNights} night
                   {yearGroup.totalNights === 1 ? "" : "s"}
                 </p>
               </div>
@@ -93,7 +93,7 @@ export default function OccupiedDatesDropdown({ occupiedDates }: Props) {
                               {monthGroup.monthLabel}
                             </p>
                             <p className={styles.metaText}>
-                              {monthGroup.totalNights} occupied night
+                              {monthGroup.totalNights} night
                               {monthGroup.totalNights === 1 ? "" : "s"}
                             </p>
                           </div>

@@ -52,7 +52,7 @@ export default async function HomePage() {
 
       <div className="statsRow">
       <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-        <p className="text-sm text-gray-500">Upcoming reserved nights</p>
+        <p className="text-sm text-gray-500">Upcoming</p>
         <p className="mt-1 text-2xl font-bold text-gray-600">
           {data.occupied_dates.length}
         </p>
