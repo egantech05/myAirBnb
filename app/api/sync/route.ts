@@ -49,15 +49,15 @@ export async function GET(request: NextRequest) {
       total_dates: occupiedDates.length,
       data,
     });
-    } catch (error) {
-        console.error("Sync failed:", error);
-    
-        const message =
-        error instanceof Error ? error.message : "Unknown error";
-    
-        return NextResponse.json(
-        { ok: false, error: "Sync failed", message },
-        { status: 500 }
-        );
-    }
+  } catch (error) {
+    console.error("Sync failed:", error);
+
+    const message =
+      error instanceof Error ? error.message : "Unknown error";
+
+    return NextResponse.json(
+      { ok: false, error: "Sync failed", message },
+      { status: 500 }
+    );
+  }
 }
