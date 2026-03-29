@@ -1,30 +1,60 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { scrapeOccupiedDates } from "@/lib/scraper";
 import { saveBookingData } from "@/lib/blob-storage";
 import type { BookingData } from "@/lib/types";
 
-export async function GET() {
-  const testData: BookingData = {
-    last_synced_at: new Date().toISOString(),
-    occupied_dates: [
-      "2025-10-06",
-      "2025-11-05",
-      "2025-12-01",
-      "2025-12-15",
-      "2026-04-02",
-      "2026-04-03",
-      "2026-04-10",
-      "2026-04-11",
-      "2026-05-01",
-      "2026-05-02",
-      "2026-05-15",
-      "2026-06-01",
-    ],
-  };
+export const runtime = "nodejs";
+export const maxDuration = 60;
 
-  await saveBookingData(testData);
+export async function GET(request: NextRequest) {
+  const expectedSecret = process.env.CRON_SECRET;
+  const listingUrl = process.env.AIRBNB_LISTING_URL;
 
-  return NextResponse.json({
-    ok: true,
-    message: "Blob data saved",
-  });
+  if (!expectedSecret) {
+    return NextResponse.json(
+      { ok: false, error: "Missing CRON_SECRET" },
+      { status: 500 }
+    );
+  }
+
+  if (!listingUrl) {
+    return NextResponse.json(
+      { ok: false, error: "Missing AIRBNB_LISTING_URL" },
+      { status: 500 }
+    );
+  }
+
+  const url = new URL(request.url);
+  const secret = url.searchParams.get("secret");
+
+  if (secret !== expectedSecret) {
+    return NextResponse.json(
+      { ok: false, error: "Unauthorized" },
+      { status: 401 }
+    );
+  }
+
+  try {
+    const occupiedDates = await scrapeOccupiedDates(listingUrl);
+
+    const data: BookingData = {
+      last_synced_at: new Date().toISOString(),
+      occupied_dates: occupiedDates,
+    };
+
+    await saveBookingData(data);
+
+    return NextResponse.json({
+      ok: true,
+      total_dates: occupiedDates.length,
+      data,
+    });
+  } catch (error) {
+    console.error("Sync failed:", error);
+
+    return NextResponse.json(
+      { ok: false, error: "Sync failed" },
+      { status: 500 }
+    );
+  }
 }
