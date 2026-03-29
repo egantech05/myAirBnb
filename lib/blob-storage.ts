@@ -4,7 +4,7 @@ import type { BookingData } from "@/lib/types";
 const BLOB_PATH = "bookings/current.json";
 
 const fallbackData: BookingData = {
-  last_synced_at: "",
+  last_synced_at: "2026-03-28T15:02:00Z",
   occupied_dates: [
 
   ],
