@@ -10,6 +10,7 @@
     "scrape:test": "tsx scripts/test-airbnb-scraper.ts"
   },
   "dependencies": {
+    "@onkernel/sdk": "^0.44.0",
     "@vercel/blob": "^2.3.2",
     "lucide-react": "^1.7.0",
     "next": "16.2.1",
@@ -31,5 +32,4 @@
     "tsx": "^4.21.0",
     "typescript": "^5"
   }
-  
 }
